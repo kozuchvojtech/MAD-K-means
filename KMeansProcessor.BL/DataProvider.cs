@@ -13,27 +13,34 @@ namespace KMeansProcessor.BL
     {
         public static Data GetData(string fileName)
         {
-            var data = FetchData(fileName);
+            var columns = FetchData(fileName);
 
-            var columns = new List<DataColumn>()
-            {
-                new DataColumn { Name = "X", Data = data.Select(d => d.First()).Cast<double>() },
-                new DataColumn { Name = "Y", Data = data.Select(d => d.ElementAt(1)).Cast<double>() }
-            };
+            var dataColumns = columns.Select(c => new DataColumn 
+                                     { 
+                                        Name = c.Title, 
+                                        Data = c.Data.Cast<double>() 
+                                     })
+                                     .ToList();
 
-            columns.ForEach(MeanVarianceProcessor.CalculateMean);
-            columns.ForEach(MeanVarianceProcessor.CalculateTotalVariance);
+            dataColumns.ForEach(MeanVarianceProcessor.CalculateMean);
+            dataColumns.ForEach(MeanVarianceProcessor.CalculateTotalVariance);
 
             return new Data
             {
-                Count = data.Count,
-                Columns = columns
+                Count = columns.First().Data.Count,
+                Columns = dataColumns
             };
         }
 
-        public static IEnumerable<Vector<double>> GetVectors(string fileName) => FetchData(fileName).Select(d => Vector<double>.Build.DenseOfEnumerable(d.Cast<double>()));
+        public static IEnumerable<Vector<double>> GetVectors(string fileName)
+        {
+            var columns = FetchData(fileName);
+            var records = Enumerable.Range(0, columns.First().Data.Count).Select(i => columns.Select(c => c.Data.ElementAt(i)));
 
-        public static List<List<object>> FetchData(string fileName)
+            return records.Select(r => Vector<double>.Build.DenseOfEnumerable(r.Cast<double>()));
+        }
+
+        public static List<Column> FetchData(string fileName)
         {
             using TextReader reader = File.OpenText(fileName);
 
@@ -43,28 +50,40 @@ namespace KMeansProcessor.BL
             csv.Read();
             csv.ReadHeader();
 
+            var index = 0;
+            var headers = new Dictionary<int,string>();
+            while (csv.TryGetField(index, out string headerColumn))
+            {
+                headers.Add(index, headerColumn);
+                index++;
+            }
+
             var typeConverterOptions = new TypeConverterOptionsCache();
             typeConverterOptions.GetOptions(typeof(double)).NumberStyle = NumberStyles.Any;
 
             csv.Configuration.TypeConverterOptionsCache = typeConverterOptions;
 
-            var records = new List<List<object>>();
+            var columns = new Dictionary<int, List<object>>();
 
             while(csv.Read())
             {
-                var columns = new List<object>();
-
-                var index = 0;
-                while(csv.TryGetField(index, out double column))
+                index = 0;
+                while(csv.TryGetField(index, out double field))
                 {
-                    columns.Add(column);
+                    if(columns.ContainsKey(index))
+                    {
+                        columns[index].Add(field);
+                    }
+                    else
+                    {
+                        columns.Add(index, new List<object> { field });
+                    }
+
                     index++;
                 }
-
-                records.Add(columns);
             }
 
-            return records.Where(r => r.Any()).ToList();
+            return columns.Select((c, i) => new Column { Title = headers[i], Data = c.Value }).ToList();
         }
     }
 }

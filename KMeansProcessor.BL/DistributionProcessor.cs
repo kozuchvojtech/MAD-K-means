@@ -7,14 +7,14 @@ namespace KMeansProcessor.BL
 {
     public static class DistributionProcessor
     {
-        private const int FROM = -7;
-        private const int TO = 7;
+        public static int Minimum { get; set; }
+        public static int Maximum { get; set; }
 
         public static void CalculateNormalDistribution(DataColumn column)
         {
             column.NormalDistribution = new List<(double, double)>();
 
-            for (double i = FROM; i < TO; i += 0.1)
+            for (double i = Minimum; i < Maximum; i += 0.1)
             {
                 column.NormalDistribution.Add((i, GetNormalDistribution(i, column.Mean, column.TotalVariance)));
             }
@@ -24,7 +24,7 @@ namespace KMeansProcessor.BL
         {
             column.NormalDistributionEmpirical = new List<double>();
 
-            var intervals = Enumerable.Range(FROM, (TO-FROM)*2).Select(n => (from: (float)n / 2, to: (float)(n + 1) / 2));
+            var intervals = Enumerable.Range(Minimum, (Maximum - Minimum) *2).Select(n => (from: (float)n / 2, to: (float)(n + 1) / 2));
 
             foreach (var interval in intervals)
             {
@@ -36,11 +36,11 @@ namespace KMeansProcessor.BL
         {
             column.CumulativeDistribution = new List<(double, double)>();
 
-            for (double i = FROM; i < TO; i += 0.1)
+            for (double i = Minimum; i < Maximum; i += 0.1)
             {
                 double normalDistributionSum = 0;
 
-                for (double j = FROM; j < i; j += 0.1)
+                for (double j = Minimum; j < i; j += 0.1)
                 {
                     normalDistributionSum += GetNormalDistribution(j, column.Mean, column.TotalVariance);
                 }
@@ -53,11 +53,11 @@ namespace KMeansProcessor.BL
         {
             column.CumulativeDistributionEmpirical = new List<(double, double)>();
 
-            for (double i = FROM; i < TO; i += 0.5)
+            for (double i = Minimum; i < Maximum; i += 0.5)
             {
                 double normalDistributionSum = 0;
 
-                for (double j = FROM; j < i; j += 0.5)
+                for (double j = Minimum; j < i; j += 0.5)
                 {
                     normalDistributionSum += column.Data.Count(d => d >= j && d <= (j + 0.5));
                 }

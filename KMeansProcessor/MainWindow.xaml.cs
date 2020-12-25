@@ -19,8 +19,10 @@ namespace KMeansProcessor
             if(openFileDialog.ShowDialog() == true)
             {
                 fileName = openFileDialog.FileName;
+
                 KMeansDataBtn.IsEnabled = true;
                 DistributionDataBtn.IsEnabled = true;
+                MeanVarianceDataBtn.IsEnabled = true;
 
                 ResultsFrame.Navigate(new KMeansResult(openFileDialog.FileName));
             }
@@ -34,6 +36,11 @@ namespace KMeansProcessor
         private void LoadDistributionData(object sender, RoutedEventArgs e)
         {
             ResultsFrame.Navigate(new DistributionResult(fileName));
+        }
+
+        private void LoadMeanVariance(object sender, RoutedEventArgs e)
+        {
+            ResultsFrame.Navigate(new MeanVarianceResult(fileName));
         }
     }
 }

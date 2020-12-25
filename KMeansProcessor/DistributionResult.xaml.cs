@@ -17,14 +17,18 @@ namespace KMeansProcessor
         public DistributionResult(string fileName) : this()
         {
             var data = DataProvider.GetData(fileName);
+            var values = data.Columns.SelectMany(c => c.Data);
+
+            DistributionProcessor.Minimum = (int)(values.Min() - data.Count*0.01);
+            DistributionProcessor.Maximum = (int)(values.Max() + data.Count*0.01);
 
             data.Columns.ForEach(DistributionProcessor.CalculateNormalDistribution);
             data.Columns.ForEach(DistributionProcessor.CalculateNormalDistributionEmpirical);
             data.Columns.ForEach(DistributionProcessor.CalculateCumulativeDistribution);
             data.Columns.ForEach(DistributionProcessor.CalculateCumulativeDistributionEmpirical);
 
-            DisplayNormalDistribution(data.Columns.First(), NormalDistributionX.plt, Color.CornflowerBlue);
-            DisplayNormalDistribution(data.Columns.ElementAt(1), NormalDistributionY.plt, Color.DarkOrange);
+            var normalDistributionPlots = data.Columns.Select((c, i) => DisplayNormalDistribution(c, i, data.Columns.Count)).ToList();
+            normalDistributionPlots.ForEach(ndp => PlotsGrid.Children.Add(ndp));
 
             data.Columns.ForEach(c => DisplayCumulativeDistribution(c, CumulativeDistribution.plt));
             data.Columns.ForEach(c => DisplayCumulativeDistributionEmpirical(c, CumulativeDistributionEmpirical.plt));
@@ -35,17 +39,24 @@ namespace KMeansProcessor
             CumulativeDistributionEmpirical.plt.Legend(true);
         }
 
-        private void DisplayNormalDistribution(DataColumn column, Plot plot, Color lineColor)
+        private WpfPlot DisplayNormalDistribution(DataColumn column, int columnIndex, int columnsCount)
         {
-            var normalDistributionEmpirical = new ScottPlot.Statistics.Histogram(column.Data.ToArray(), binSize: 0.5, min: -7, max: 7);
+            var wpfPlot = new WpfPlot
+            {
+                Margin = new System.Windows.Thickness(columnIndex*(1500/columnsCount), 0, 1500 - (columnIndex+1)*(1500/columnsCount), 500)
+            };
+
+            var normalDistributionEmpirical = new ScottPlot.Statistics.Histogram(column.Data.ToArray(), binSize: 0.5, min: DistributionProcessor.Minimum, max: DistributionProcessor.Maximum);
             double barWidth = normalDistributionEmpirical.binSize * 1.2;
 
-            plot.PlotBar(normalDistributionEmpirical.bins, normalDistributionEmpirical.countsFrac, barWidth: barWidth, outlineWidth: 0, fillColor: Color.Gray);
-            plot.PlotScatter(column.NormalDistribution.Select(nd => nd.x).ToArray(), column.NormalDistribution.Select(nd => nd.y).ToArray(), markerSize: 0, lineWidth: 2, color: lineColor);
-            plot.AxisAutoY(margin: 0);
-            plot.Axis(x1: -7);
-            plot.Ticks(numericFormatStringY: "0.00");
-            plot.Title($"Normal distribution - {column.Name}");
+            wpfPlot.plt.PlotBar(normalDistributionEmpirical.bins, normalDistributionEmpirical.countsFrac, barWidth: barWidth, outlineWidth: 0, fillColor: Color.Gray);
+            wpfPlot.plt.PlotScatter(column.NormalDistribution.Select(nd => nd.x).ToArray(), column.NormalDistribution.Select(nd => nd.y).ToArray(), markerSize: 0, lineWidth: 2);
+            wpfPlot.plt.AxisAutoY(margin: 0);
+            wpfPlot.plt.Axis(x1: DistributionProcessor.Minimum);
+            wpfPlot.plt.Ticks(numericFormatStringY: "0.00");
+            wpfPlot.plt.Title($"Normal distribution - {column.Name}");
+
+            return wpfPlot;
         }
 
         private void DisplayCumulativeDistribution(DataColumn column, Plot plot)

@@ -31,11 +31,14 @@
                 Style="{StaticResource LoadDataButtonStyle}"
                 VerticalAlignment="Top" Click="FetchData" Height="49" Width="125"/>
         <Frame x:Name="ResultsFrame" NavigationUIVisibility="Hidden" Content="" Margin="20,100,20,20"/>
-        <Button x:Name="KMeansDataBtn" Content="K-means data" IsEnabled="False" HorizontalAlignment="Left" Margin="168,20,0,0" 
+        <Button x:Name="KMeansDataBtn" Content="K-means" IsEnabled="False" HorizontalAlignment="Left" Margin="168,20,0,0" 
             Style="{StaticResource LoadDataButtonStyle}"
             VerticalAlignment="Top" Click="LoadKMeansData" Height="49" Width="161"/>
-        <Button x:Name="DistributionDataBtn" Content="Distribution data" IsEnabled="False" HorizontalAlignment="Left" Margin="354,20,0,0" 
+        <Button x:Name="DistributionDataBtn" Content="Distribution" IsEnabled="False" HorizontalAlignment="Left" Margin="354,20,0,0" 
             Style="{StaticResource LoadDataButtonStyle}"
             VerticalAlignment="Top" Click="LoadDistributionData"  Height="49" Width="173"/>
+        <Button x:Name="MeanVarianceDataBtn" Content="Mean/variance" IsEnabled="False" HorizontalAlignment="Left" Margin="550,20,0,0" 
+            Style="{StaticResource LoadDataButtonStyle}"
+            VerticalAlignment="Top" Click="LoadMeanVariance" Height="49" Width="173"/>
     </Grid>
 </Window>

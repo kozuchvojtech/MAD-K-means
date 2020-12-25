@@ -1,4 +1,4 @@
-﻿<Page x:Class="KMeansProcessor.DistributionResult"
+﻿<Page x:Class="KMeansProcessor.MeanVarianceResult"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,9 +6,7 @@
       xmlns:local="clr-namespace:KMeansProcessor"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1500"
-      Title="DistributionResult">
-    <Grid x:Name="PlotsGrid">
-        <WpfPlot Name="CumulativeDistribution" Margin="0,500,750,0" />
-        <WpfPlot Name="CumulativeDistributionEmpirical" Margin="750,500,0,0" />
+      Title="MeanVarianceResult">
+    <Grid x:Name="MeanVarianceGrid">
     </Grid>
 </Page>
