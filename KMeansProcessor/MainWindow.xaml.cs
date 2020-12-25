@@ -25,7 +25,7 @@ namespace KMeansProcessor
                 MeanVarianceDataBtn.IsEnabled = true;
                 DatasetDataBtn.IsEnabled = true;
 
-                ResultsFrame.Navigate(new KMeansResult(openFileDialog.FileName));
+                ResultsFrame.Navigate(new KMeansResult(fileName));
             }
         }
 
