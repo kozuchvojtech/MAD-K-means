@@ -37,7 +37,7 @@ namespace KMeansProcessor.BL
             var columns = FetchData(fileName);
             var records = Enumerable.Range(0, columns.First().Data.Count).Select(i => columns.Select(c => c.Data.ElementAt(i)));
 
-            return records.Select(r => Vector<double>.Build.DenseOfEnumerable(r.Cast<double>()));
+            return records.Select(Vector<double>.Build.DenseOfEnumerable);
         }
 
         public static List<Column> FetchData(string fileName)
@@ -63,12 +63,12 @@ namespace KMeansProcessor.BL
 
             csv.Configuration.TypeConverterOptionsCache = typeConverterOptions;
 
-            var columns = new Dictionary<int, List<object>>();
+            var columns = new Dictionary<int, List<string>>();
 
             while(csv.Read())
             {
                 index = 0;
-                while(csv.TryGetField(index, out double field))
+                while(csv.TryGetField(index, out string field))
                 {
                     if(columns.ContainsKey(index))
                     {
@@ -76,14 +76,34 @@ namespace KMeansProcessor.BL
                     }
                     else
                     {
-                        columns.Add(index, new List<object> { field });
+                        columns.Add(index, new List<string> { field });
                     }
 
                     index++;
                 }
             }
 
-            return columns.Select((c, i) => new Column { Title = headers[i], Data = c.Value }).ToList();
+            return columns.Select((c, i) => Normalize(headers[i], c.Value)).ToList();
+        }
+
+        private static Column Normalize(string title, List<string> fields)
+        {
+            var data = Enumerable.Empty<double>();
+
+            try
+            {
+                data = fields.Select(f => double.Parse(f)).ToList();
+            }
+            catch
+            {
+                var fieldsIds = fields.GroupBy(v => v)
+                                      .Select((g, i) => new { Value = g.Key, Id = (double)i })
+                                      .ToDictionary(f => f.Value, f => f.Id);
+
+                data = fields.Select(f => fieldsIds[f]).ToList();
+            }
+
+            return new Column { Title = title, Data = data.ToList() };
         }
     }
 }
