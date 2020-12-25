@@ -1,0 +1,30 @@
+﻿<Page x:Class="KMeansProcessor.DatasetResult"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:KMeansProcessor"
+      mc:Ignorable="d" 
+      d:DesignHeight="1000" d:DesignWidth="1500"
+      Title="DatasetResult">
+    <Page.Resources>
+        <Style x:Name="RoundedCorners" TargetType="{x:Type RichTextBox}">
+            <Setter Property="Background" Value="LightGray"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="25px"/>
+            <Setter Property="FontFamily" Value="Arial"/>
+            <Style.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="3" />
+                </Style>
+                <Style TargetType="{x:Type Paragraph}">
+                    <Setter Property="TextAlignment" Value="Center" />
+                </Style>
+            </Style.Resources>
+        </Style>
+    </Page.Resources>
+    <Grid x:Name="DatasetGrid">
+        <RichTextBox x:Name="TotalRowsRTb" Margin="766,255,96,255"/>
+        <RichTextBox x:Name="TotalColumnsRTb" Margin="98,255,764,255"/>
+    </Grid>
+</Page>

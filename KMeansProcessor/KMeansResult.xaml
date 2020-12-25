@@ -9,8 +9,8 @@
       Title="KMeansResult">
     <Grid>
         <WpfPlot Name="KMeansPlot" Margin="0,100,0,0" />
-        <Slider x:Name="KValueSlider" HorizontalAlignment="Left" Margin="147,42,0,0" Thumb.DragCompleted="ChangeKValue" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0"
-                TickFrequency="1" IsSnapToTickEnabled="True" Value="2" VerticalAlignment="Top" Minimum="1" Maximum="10" Width="240" Height="26"/>
-        <Label Content="K-value" HorizontalAlignment="Left" FontFamily="Arial" FontSize="20px" Margin="40,35,0,0" VerticalAlignment="Top"/>
+        <Slider x:Name="KValueSlider" HorizontalAlignment="Left" Margin="690,47,0,0" Thumb.DragCompleted="ChangeKValue" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0"
+                TickFrequency="1" IsSnapToTickEnabled="True" Value="2" VerticalAlignment="Top" Minimum="1" Maximum="10" Width="240" Height="30"/>
+        <Label Content="K-value" HorizontalAlignment="Left" FontFamily="Arial" FontSize="25px" Margin="590,36,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Page>
