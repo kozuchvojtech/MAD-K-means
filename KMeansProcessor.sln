@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMeansProcessor", "KMeansProcessor\KMeansProcessor.csproj", "{A3153A98-7474-4AC4-884D-3FF43234065E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KMeansProcessor.BL", "KMeansProcessor.BL\KMeansProcessor.BL.csproj", "{47F10FA9-213E-4887-B719-9FC960BB2AF0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3153A98-7474-4AC4-884D-3FF43234065E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3153A98-7474-4AC4-884D-3FF43234065E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3153A98-7474-4AC4-884D-3FF43234065E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3153A98-7474-4AC4-884D-3FF43234065E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47F10FA9-213E-4887-B719-9FC960BB2AF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47F10FA9-213E-4887-B719-9FC960BB2AF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47F10FA9-213E-4887-B719-9FC960BB2AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47F10FA9-213E-4887-B719-9FC960BB2AF0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EC806267-55FD-4C0F-8634-F56418E09181}
+	EndGlobalSection
+EndGlobal
