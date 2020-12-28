@@ -27,6 +27,7 @@ namespace KMeansProcessor.BL
             do
             {
                 centroidChanged = false;
+                clusters.ForEach(c => c.Vectors = new List<Vector<double>>());
 
                 foreach (var vector in data.Except(centroids))
                 {
@@ -48,6 +49,17 @@ namespace KMeansProcessor.BL
                 centroids = clusters.Select(c => c.Centroid).ToList();
             }
             while (centroidChanged);
+
+
+            foreach (var cluster in clusters.Select((c,i) => new { Item = c, Index = i }))
+            {
+                Console.WriteLine($"Cluster {cluster.Index}");
+
+                var ratio = (double)cluster.Item.Vectors.Count/data.Count();
+
+                Console.WriteLine($"Number of vectors \t {cluster.Item.Vectors.Count} ({ratio*100:0.00}%)");
+                Console.WriteLine($"SSE \t\t\t {cluster.Item.Vectors.Sum(v => Distance.Euclidean(v, cluster.Item.Centroid))}\n");                
+            }
 
             return clusters;
         }

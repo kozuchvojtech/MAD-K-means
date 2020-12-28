@@ -40,8 +40,8 @@ namespace KMeansProcessor
             var scatter = plot.PlotScatter(cluster.Vectors.Select(v => v.ElementAt(0)).ToArray(), cluster.Vectors.Select(v => v.ElementAt(1)).ToArray(), lineStyle: LineStyle.None, markerSize: 7);
             plot.PlotPoint(cluster.Centroid.ElementAt(0), cluster.Centroid.ElementAt(1), markerShape: MarkerShape.cross, color: scatter.color, markerSize: 12);
 
-            Console.WriteLine($"Centroid: {JsonSerializer.Serialize(cluster.Centroid)}\n");
-            Console.WriteLine($"Vectors: {JsonSerializer.Serialize(cluster.Vectors)}\n");
+            //Console.WriteLine($"Centroid: {JsonSerializer.Serialize(cluster.Centroid)}\n");
+            //Console.WriteLine($"Vectors: {JsonSerializer.Serialize(cluster.Vectors)}\n");
         }
 
         private void ChangeKValue(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e) => ProcessKMeans();
