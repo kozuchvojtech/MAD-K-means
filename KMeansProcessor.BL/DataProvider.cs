@@ -41,7 +41,12 @@ namespace KMeansProcessor.BL
 
         public static IEnumerable<Record> GetRecords(List<Column> columns)
         {
-            return Enumerable.Range(0, columns.First().Data.Count).Select(i => GetRecord(columns, i));
+            var records = Enumerable.Range(0, columns.First().Data.Count).Select(i => GetRecord(columns, i));
+
+            var nominalDataCount = records.Max(r => r.NominalData.Count());
+            var numericDataCount = records.Max(r => r.NumericData.Count());
+
+            return records.Where(r => r.NominalData.Count() == nominalDataCount && r.NumericData.Count() == numericDataCount);
         }
 
         private static Record GetRecord(List<Column> columns, int index)
@@ -99,7 +104,19 @@ namespace KMeansProcessor.BL
                 }
             }
 
-            return columns.Select((c, i) => Normalize(headers[i], c.Value)).ToList();
+            var invalidRecords = Enumerable.Range(0, headers.Count)
+                                           .Where(i => columns.Any(c => string.IsNullOrEmpty(c.Value.ElementAt(i))));
+
+            foreach (var column in columns)
+            {
+                foreach (var invalidRecord in invalidRecords)
+                {
+                    column.Value.RemoveAt(invalidRecord);
+                }
+            }
+
+            var normalizedColumns = columns.Select((c, i) => Normalize(headers[i], c.Value));
+            return normalizedColumns.ToList();
         }
 
         private static Column Normalize(string title, List<string> fields)
