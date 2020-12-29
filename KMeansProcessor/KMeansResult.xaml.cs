@@ -1,9 +1,9 @@
 ﻿using KMeansProcessor.BL;
 using KMeansProcessor.BL.Model;
 using ScottPlot;
-using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.Json;
 using System.Windows.Controls;
 
 namespace KMeansProcessor
@@ -11,6 +11,7 @@ namespace KMeansProcessor
     public partial class KMeansResult : Page
     {
         private readonly string fileName;
+        private List<Cluster> clusters;
 
         public KMeansResult()
         {
@@ -25,25 +26,62 @@ namespace KMeansProcessor
 
         private void ProcessKMeans()
         {
-            KMeansPlot.Reset();
+            var columns = DataProvider.FetchData(fileName);
 
-            var vectors = DataProvider.GetVectors(fileName);
-            var clusters = BL.KMeansProcessor.Process(vectors, (int)KValueSlider.Value).ToList();
+            var axisColumns = new ObservableCollection<AxisColumn>();
+            columns.Select((c, i) => new AxisColumn { Id = i, Title = c.Title }).ToList().ForEach(c => axisColumns.Add(c));
 
-            clusters.ForEach(c => PrintCluster(c, KMeansPlot.plt));
+            AxisXColumnCB.ItemsSource = axisColumns;
+            AxisXColumnCB.SelectedItem = axisColumns.First();
 
-            KMeansPlot.Render();
+            AxisYColumnCB.ItemsSource = axisColumns;
+            AxisYColumnCB.SelectedItem = axisColumns.ElementAt(1);
+
+            var vectors = DataProvider.GetVectors(columns);
+
+            clusters = BL.KMeansProcessor.Process(vectors, (int)KValueSlider.Value).ToList();
+
+            RenderClusters();
         }
 
         private void PrintCluster(Cluster cluster, Plot plot)
         {
-            var scatter = plot.PlotScatter(cluster.Vectors.Select(v => v.ElementAt(0)).ToArray(), cluster.Vectors.Select(v => v.ElementAt(1)).ToArray(), lineStyle: LineStyle.None, markerSize: 7);
-            plot.PlotPoint(cluster.Centroid.ElementAt(0), cluster.Centroid.ElementAt(1), markerShape: MarkerShape.cross, color: scatter.color, markerSize: 12);
+            var scatter = plot.PlotScatter(cluster.Vectors.Select(v => v.ElementAt(AxisXColumnCB.SelectedIndex)).ToArray(), 
+                                           cluster.Vectors.Select(v => v.ElementAt(AxisYColumnCB.SelectedIndex)).ToArray(), 
+                                           lineStyle: LineStyle.None, 
+                                           markerSize: 7);
 
-            //Console.WriteLine($"Centroid: {JsonSerializer.Serialize(cluster.Centroid)}\n");
-            //Console.WriteLine($"Vectors: {JsonSerializer.Serialize(cluster.Vectors)}\n");
+            plot.PlotPoint(cluster.Centroid.ElementAt(AxisXColumnCB.SelectedIndex), 
+                           cluster.Centroid.ElementAt(AxisYColumnCB.SelectedIndex), 
+                           markerShape: MarkerShape.cross, 
+                           color: scatter.color,
+                           markerSize: 12);
+        }
+
+        private void RenderClusters()
+        {
+            KMeansPlot.Reset();
+
+            clusters.ForEach(c => PrintCluster(c, KMeansPlot.plt));
+            KMeansPlot.Render();
         }
 
         private void ChangeKValue(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e) => ProcessKMeans();
+
+        private void RerenderClusters(object sender, SelectionChangedEventArgs e)
+        {
+            if (clusters == null || AxisXColumnCB.SelectedIndex < 0 || AxisYColumnCB.SelectedIndex < 0)
+            {
+                return;
+            }
+
+            RenderClusters();
+        }
+    }
+
+    public class AxisColumn
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
     }
 }

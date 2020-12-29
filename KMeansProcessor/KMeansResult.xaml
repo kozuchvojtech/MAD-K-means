@@ -7,10 +7,16 @@
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="1500"
       Title="KMeansResult">
-    <Grid>
+    <Grid x:Name="KMeansGrid">
         <WpfPlot Name="KMeansPlot" Margin="0,100,0,0" />
-        <Slider x:Name="KValueSlider" HorizontalAlignment="Left" Margin="690,47,0,0" Thumb.DragCompleted="ChangeKValue" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0"
+        <Slider x:Name="KValueSlider" HorizontalAlignment="Left" Margin="295,42,0,0" Thumb.DragCompleted="ChangeKValue" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="0"
                 TickFrequency="1" IsSnapToTickEnabled="True" Value="2" VerticalAlignment="Top" Minimum="1" Maximum="10" Width="240" Height="30"/>
-        <Label Content="K-value" HorizontalAlignment="Left" FontFamily="Arial" FontSize="25px" Margin="590,36,0,0" VerticalAlignment="Top"/>
+        <Label Content="K-value" HorizontalAlignment="Left" FontFamily="Arial" FontSize="25px" Margin="195,31,0,0" VerticalAlignment="Top"/>
+        <Label Content="X" HorizontalAlignment="Left" FontFamily="Arial" FontSize="25px" Margin="605,31,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="AxisXColumnCB" DisplayMemberPath="Title" HorizontalAlignment="Left" SelectionChanged="RerenderClusters" 
+                  Margin="640,35,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="250" Height="30"/>
+        <Label Content="Y" HorizontalAlignment="Left" FontFamily="Arial" FontSize="25px" Margin="994,30,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="AxisYColumnCB" DisplayMemberPath="Title" HorizontalAlignment="Left" SelectionChanged="RerenderClusters"
+                  Margin="1029,34,0,0" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="250" Height="30"/>
     </Grid>
 </Page>
