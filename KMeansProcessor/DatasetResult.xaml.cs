@@ -17,7 +17,7 @@ namespace KMeansProcessor
 
         public DatasetResult(string fileName) : this()
         {
-            var data = DataProvider.GetData(fileName);
+            var data = DataProvider.GetData(fileName, false);
 
             var totalRowsTitle = new Paragraph();
             totalRowsTitle.Inlines.Add(new Run("Total rows"));

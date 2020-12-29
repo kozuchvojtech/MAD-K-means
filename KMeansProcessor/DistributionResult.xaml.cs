@@ -18,7 +18,10 @@ namespace KMeansProcessor
 
         public DistributionResult(string fileName) : this()
         {
-            var data = DataProvider.GetData(fileName);
+            var columns = DataProvider.FetchData(fileName);
+            columns = columns.Where(c => c.IsNumeric).ToList();
+
+            var data = DataProvider.GetData(columns);
             var values = data.Columns.SelectMany(c => c.Data);
 
             DistributionProcessor.Minimum = (int)(values.Min() - data.Count*0.01);

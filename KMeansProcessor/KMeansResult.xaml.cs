@@ -29,7 +29,7 @@ namespace KMeansProcessor
             var columns = DataProvider.FetchData(fileName);
 
             var axisColumns = new ObservableCollection<AxisColumn>();
-            columns.Select((c, i) => new AxisColumn { Id = i, Title = c.Title }).ToList().ForEach(c => axisColumns.Add(c));
+            columns.Where(c => c.IsNumeric).Select((c, i) => new AxisColumn { Id = i, Title = c.Title }).ToList().ForEach(c => axisColumns.Add(c));
 
             AxisXColumnCB.ItemsSource = axisColumns;
             AxisXColumnCB.SelectedItem = axisColumns.First();
@@ -37,25 +37,24 @@ namespace KMeansProcessor
             AxisYColumnCB.ItemsSource = axisColumns;
             AxisYColumnCB.SelectedItem = axisColumns.ElementAt(1);
 
-            var vectors = DataProvider.GetVectors(columns);
-
-            clusters = BL.KMeansProcessor.Process(vectors, (int)KValueSlider.Value).ToList();
+            var records = DataProvider.GetRecords(columns);
+            clusters = BL.KMeansProcessor.Process(records, (int)KValueSlider.Value).ToList();
 
             RenderClusters();
         }
 
         private void PrintCluster(Cluster cluster, Plot plot)
         {
-            var scatter = plot.PlotScatter(cluster.Vectors.Select(v => v.ElementAt(AxisXColumnCB.SelectedIndex)).ToArray(), 
-                                           cluster.Vectors.Select(v => v.ElementAt(AxisYColumnCB.SelectedIndex)).ToArray(), 
-                                           lineStyle: LineStyle.None, 
+            var scatter = plot.PlotScatter(cluster.Vectors.Select(v => v.NumericData.ElementAt(AxisXColumnCB.SelectedIndex)).ToArray(),
+                                           cluster.Vectors.Select(v => v.NumericData.ElementAt(AxisYColumnCB.SelectedIndex)).ToArray(),
+                                           lineStyle: LineStyle.None,
                                            markerSize: 7);
 
-            plot.PlotPoint(cluster.Centroid.ElementAt(AxisXColumnCB.SelectedIndex), 
-                           cluster.Centroid.ElementAt(AxisYColumnCB.SelectedIndex), 
-                           markerShape: MarkerShape.cross, 
+            plot.PlotPoint(cluster.Centroid.NumericData.ElementAt(AxisXColumnCB.SelectedIndex),
+                           cluster.Centroid.NumericData.ElementAt(AxisYColumnCB.SelectedIndex),
+                           markerShape: MarkerShape.cross,
                            color: scatter.color,
-                           markerSize: 12);
+                           markerSize: 15);
         }
 
         private void RenderClusters()

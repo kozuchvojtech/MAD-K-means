@@ -17,7 +17,10 @@ namespace KMeansProcessor
 
         public MeanVarianceResult(string fileName) : this()
         {
-            var data = DataProvider.GetData(fileName);
+            var columns = DataProvider.FetchData(fileName);
+            columns = columns.Where(c => c.IsNumeric).ToList();
+
+            var data = DataProvider.GetData(columns);
 
             var textBoxes = data.Columns.Select((c, i) => DisplayMeanVariance(c, data.Columns.Count, i)).ToList();
             textBoxes.ForEach(tb => MeanVarianceGrid.Children.Add(tb));

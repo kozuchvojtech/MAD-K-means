@@ -11,19 +11,26 @@ namespace KMeansProcessor.BL
 {
     public static class DataProvider
     {
-        public static Data GetData(string fileName)
+        public static Data GetData(string fileName, bool calculateMeanVariance = true)
         {
             var columns = FetchData(fileName);
+            return GetData(columns, calculateMeanVariance);
+        }
 
-            var dataColumns = columns.Select(c => new DataColumn 
-                                     { 
-                                        Name = c.Title, 
-                                        Data = c.Data.Cast<double>() 
+        public static Data GetData(List<Column> columns, bool calculateMeanVariance = true)
+        {
+            var dataColumns = columns.Select(c => new DataColumn
+                                     {
+                                         Name = c.Title,
+                                         Data = c.Data.Cast<double>()
                                      })
                                      .ToList();
 
-            dataColumns.ForEach(MeanVarianceProcessor.CalculateMean);
-            dataColumns.ForEach(MeanVarianceProcessor.CalculateTotalVariance);
+            if (calculateMeanVariance)
+            {
+                dataColumns.ForEach(MeanVarianceProcessor.CalculateMean);
+                dataColumns.ForEach(MeanVarianceProcessor.CalculateTotalVariance);
+            }
 
             return new Data
             {
@@ -32,16 +39,21 @@ namespace KMeansProcessor.BL
             };
         }
 
-        public static IEnumerable<Vector<double>> GetVectors(string fileName)
+        public static IEnumerable<Record> GetRecords(List<Column> columns)
         {
-            var columns = FetchData(fileName);
-            return GetVectors(columns);
+            return Enumerable.Range(0, columns.First().Data.Count).Select(i => GetRecord(columns, i));
         }
 
-        public static IEnumerable<Vector<double>> GetVectors(List<Column> columns)
+        private static Record GetRecord(List<Column> columns, int index)
         {
-            var records = Enumerable.Range(0, columns.First().Data.Count).Select(i => columns.Select(c => c.Data.ElementAt(i)));
-            return records.Select(Vector<double>.Build.DenseOfEnumerable);
+            var numericData = columns.Select(c => c.Data.ElementAt(index)).Where(v => v is double);
+            var nominalData = columns.Select(c => c.Data.ElementAt(index)).Except(numericData).Cast<string>();
+
+            return new Record
+            {
+                NominalData = nominalData,
+                NumericData = Vector<double>.Build.DenseOfEnumerable(numericData.Cast<double>())
+            };
         }
 
         public static List<Column> FetchData(string fileName)
@@ -92,22 +104,27 @@ namespace KMeansProcessor.BL
 
         private static Column Normalize(string title, List<string> fields)
         {
-            var data = Enumerable.Empty<double>();
+            var isNumeric = false;
+            var data = Enumerable.Empty<object>();
 
-            try
+            if(fields.All(f => double.TryParse(f, out var value)))
             {
-                data = fields.Select(f => double.Parse(f)).ToList();
+                data = fields.Select(f => double.Parse(f)).Cast<object>();
+                isNumeric = true;
             }
-            catch
+            else
             {
-                var fieldsIds = fields.GroupBy(v => v)
-                                      .Select((g, i) => new { Value = g.Key, Id = (double)i })
-                                      .ToDictionary(f => f.Value, f => f.Id);
-
-                data = fields.Select(f => fieldsIds[f]).ToList();
+                data = fields.Cast<object>();
+                isNumeric = false;
             }
 
-            return new Column { Title = title, Data = data.ToList() };
+            return new Column { Title = title, Data = data.ToList(), IsNumeric = isNumeric };
         }
+    }
+
+    public class Record
+    {
+        public Vector<double> NumericData { get; set; }
+        public IEnumerable<string> NominalData { get; set; }
     }
 }

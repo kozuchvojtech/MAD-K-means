@@ -5,6 +5,7 @@ namespace KMeansProcessor.BL.Model
     public class Column
     {
         public string Title { get; set; }
-        public List<double> Data { get; set; }
+        public bool IsNumeric { get; set; }
+        public List<object> Data { get; set; }
     }
 }
