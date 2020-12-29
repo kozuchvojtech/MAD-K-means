@@ -50,6 +50,7 @@ namespace KMeansProcessor.BL
             }
             while (centroidChanged);
 
+            Console.Clear();
 
             foreach (var cluster in clusters.Select((c,i) => new { Item = c, Index = i }))
             {

@@ -35,8 +35,12 @@ namespace KMeansProcessor.BL
         public static IEnumerable<Vector<double>> GetVectors(string fileName)
         {
             var columns = FetchData(fileName);
-            var records = Enumerable.Range(0, columns.First().Data.Count).Select(i => columns.Select(c => c.Data.ElementAt(i)));
+            return GetVectors(columns);
+        }
 
+        public static IEnumerable<Vector<double>> GetVectors(List<Column> columns)
+        {
+            var records = Enumerable.Range(0, columns.First().Data.Count).Select(i => columns.Select(c => c.Data.ElementAt(i)));
             return records.Select(Vector<double>.Build.DenseOfEnumerable);
         }
 

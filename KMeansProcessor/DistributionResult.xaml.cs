@@ -1,8 +1,10 @@
 ﻿using KMeansProcessor.BL;
 using KMeansProcessor.BL.Model;
 using ScottPlot;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace KMeansProcessor
@@ -22,10 +24,14 @@ namespace KMeansProcessor
             DistributionProcessor.Minimum = (int)(values.Min() - data.Count*0.01);
             DistributionProcessor.Maximum = (int)(values.Max() + data.Count*0.01);
 
-            data.Columns.ForEach(DistributionProcessor.CalculateNormalDistribution);
-            data.Columns.ForEach(DistributionProcessor.CalculateNormalDistributionEmpirical);
-            data.Columns.ForEach(DistributionProcessor.CalculateCumulativeDistribution);
-            data.Columns.ForEach(DistributionProcessor.CalculateCumulativeDistributionEmpirical);
+            var distributionTasks = new List<Task>();
+
+            distributionTasks.Add(Task.Run(() => data.Columns.ForEach(DistributionProcessor.CalculateNormalDistribution)));
+            distributionTasks.Add(Task.Run(() => data.Columns.ForEach(DistributionProcessor.CalculateNormalDistributionEmpirical)));
+            distributionTasks.Add(Task.Run(() => data.Columns.ForEach(DistributionProcessor.CalculateCumulativeDistribution)));
+            distributionTasks.Add(Task.Run(() => data.Columns.ForEach(DistributionProcessor.CalculateCumulativeDistributionEmpirical)));
+
+            Task.WhenAll(distributionTasks).GetAwaiter().GetResult();
 
             var normalDistributionPlots = data.Columns.Select((c, i) => DisplayNormalDistribution(c, i, data.Columns.Count)).ToList();
             normalDistributionPlots.ForEach(ndp => PlotsGrid.Children.Add(ndp));
@@ -46,7 +52,7 @@ namespace KMeansProcessor
                 Margin = new System.Windows.Thickness(columnIndex*(1500/columnsCount), 0, 1500 - (columnIndex+1)*(1500/columnsCount), 500)
             };
 
-            var normalDistributionEmpirical = new ScottPlot.Statistics.Histogram(column.Data.ToArray(), binSize: 0.5, min: DistributionProcessor.Minimum, max: DistributionProcessor.Maximum);
+            var normalDistributionEmpirical = new ScottPlot.Statistics.Histogram(column.Data.ToArray(), binSize: DistributionProcessor.StepSize*5, min: DistributionProcessor.Minimum, max: DistributionProcessor.Maximum);
             double barWidth = normalDistributionEmpirical.binSize * 1.2;
 
             wpfPlot.plt.PlotBar(normalDistributionEmpirical.bins, normalDistributionEmpirical.countsFrac, barWidth: barWidth, outlineWidth: 0, fillColor: Color.Gray);

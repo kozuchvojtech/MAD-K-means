@@ -1,7 +1,9 @@
 ﻿using KMeansProcessor.BL.Model;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace KMeansProcessor.BL
 {
@@ -9,12 +11,13 @@ namespace KMeansProcessor.BL
     {
         public static int Minimum { get; set; }
         public static int Maximum { get; set; }
+        public static double StepSize => (Maximum - Minimum) * 0.01;
 
         public static void CalculateNormalDistribution(DataColumn column)
         {
             column.NormalDistribution = new List<(double, double)>();
 
-            for (double i = Minimum; i < Maximum; i += 0.1)
+            for (double i = Minimum; i < Maximum; i += StepSize)
             {
                 column.NormalDistribution.Add((i, GetNormalDistribution(i, column.Mean, column.TotalVariance)));
             }
@@ -22,25 +25,26 @@ namespace KMeansProcessor.BL
 
         public static void CalculateNormalDistributionEmpirical(DataColumn column)
         {
-            column.NormalDistributionEmpirical = new List<double>();
-
+            var normalDistributionsEmpirical = new ConcurrentBag<double>();
             var intervals = Enumerable.Range(Minimum, (Maximum - Minimum) *2).Select(n => (from: (float)n / 2, to: (float)(n + 1) / 2));
 
-            foreach (var interval in intervals)
+            Parallel.ForEach(intervals, interval =>
             {
-                column.NormalDistributionEmpirical.Add(column.Data.Count(d => d >= interval.from && d <= interval.to));
-            }
+                normalDistributionsEmpirical.Add(column.Data.Count(d => d >= interval.from && d <= interval.to));
+            });
+
+            column.NormalDistributionEmpirical = normalDistributionsEmpirical.ToList();
         }
 
         public static void CalculateCumulativeDistribution(DataColumn column)
         {
             column.CumulativeDistribution = new List<(double, double)>();
 
-            for (double i = Minimum; i < Maximum; i += 0.1)
+            for (double i = Minimum; i < Maximum; i += StepSize)
             {
                 double normalDistributionSum = 0;
 
-                for (double j = Minimum; j < i; j += 0.1)
+                for (double j = Minimum; j < i; j += StepSize)
                 {
                     normalDistributionSum += GetNormalDistribution(j, column.Mean, column.TotalVariance);
                 }
@@ -53,13 +57,13 @@ namespace KMeansProcessor.BL
         {
             column.CumulativeDistributionEmpirical = new List<(double, double)>();
 
-            for (double i = Minimum; i < Maximum; i += 0.5)
+            for (double i = Minimum; i < Maximum; i += StepSize*5)
             {
                 double normalDistributionSum = 0;
 
-                for (double j = Minimum; j < i; j += 0.5)
+                for (double j = Minimum; j < i; j += StepSize*5)
                 {
-                    normalDistributionSum += column.Data.Count(d => d >= j && d <= (j + 0.5));
+                    normalDistributionSum += column.Data.Count(d => d >= j && d <= (j + StepSize*5));
                 }
 
                 column.CumulativeDistributionEmpirical.Add((i, normalDistributionSum));
