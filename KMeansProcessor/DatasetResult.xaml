@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:KMeansProcessor"
       mc:Ignorable="d" 
-      d:DesignHeight="1000" d:DesignWidth="1500"
+      d:DesignHeight="1000" d:DesignWidth="1800"
       Title="DatasetResult">
     <Page.Resources>
         <Style x:Name="RoundedCorners" TargetType="{x:Type RichTextBox}">
@@ -24,7 +24,7 @@
         </Style>
     </Page.Resources>
     <Grid x:Name="DatasetGrid">
-        <RichTextBox x:Name="TotalRowsRTb" Margin="766,255,96,255"/>
-        <RichTextBox x:Name="TotalColumnsRTb" Margin="98,255,764,255"/>
+        <RichTextBox x:Name="TotalRowsRTb" Margin="1066,255,96,255"/>
+        <RichTextBox x:Name="TotalColumnsRTb" Margin="98,255,1064,255"/>
     </Grid>
 </Page>

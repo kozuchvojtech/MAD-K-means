@@ -9,6 +9,8 @@ namespace KMeansProcessor
 {
     public partial class DistributionResult : Page
     {
+        private const int Threshold = 1000;
+
         public DistributionResult()
         {
             InitializeComponent();
@@ -20,6 +22,12 @@ namespace KMeansProcessor
             columns = columns.Where(c => c.IsNumeric).ToList();
 
             var data = DataProvider.GetData(columns);
+
+            foreach (var column in data.Columns)
+            {
+                column.Data = column.Data.Take(Threshold);
+            }
+
             (var minimum, var maximum) = DistributionProcessor.GetColumnBoundaries(data.Columns);
 
             DistributionProcessor.Minimum = minimum;
@@ -46,12 +54,12 @@ namespace KMeansProcessor
         {
             var wpfPlot = new WpfPlot
             {
-                Margin = new System.Windows.Thickness(columnIndex*(1500/columnsCount), 0, 1500 - (columnIndex+1)*(1500/columnsCount), 500)
+                Margin = new System.Windows.Thickness(columnIndex*(1800/columnsCount), 0, 1800 - (columnIndex+1)*(1800/columnsCount), 500)
             };
 
             (var minimum, var maximum) = DistributionProcessor.GetColumnBoundaries(column);
 
-            var normalDistributionEmpirical = new ScottPlot.Statistics.Histogram(column.Data.ToArray(), binCount: 20, min: minimum, max: maximum);
+            var normalDistributionEmpirical = new ScottPlot.Statistics.Histogram(column.Data.ToArray(), binCount: 10, min: minimum, max: maximum);
             double barWidth = normalDistributionEmpirical.binSize * 1.2;
 
             wpfPlot.plt.PlotBar(normalDistributionEmpirical.bins, normalDistributionEmpirical.countsFrac.Select(v => v / normalDistributionEmpirical.binSize).ToArray(), barWidth: barWidth, outlineWidth: 0, fillColor: Color.Gray);
@@ -59,7 +67,7 @@ namespace KMeansProcessor
             wpfPlot.plt.AxisAutoY(margin: 0);
             wpfPlot.plt.Axis(x1: minimum);
             wpfPlot.plt.Ticks(numericFormatStringY: "0.00");
-            wpfPlot.plt.Title($"Normal distribution - {column.Name}");
+            wpfPlot.plt.Title(column.Name);
 
             return wpfPlot;
         }

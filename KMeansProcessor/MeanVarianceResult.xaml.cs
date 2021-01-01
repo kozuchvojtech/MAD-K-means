@@ -59,7 +59,7 @@ namespace KMeansProcessor
         {
             var textBox = new RichTextBox
             {
-                Margin = new Thickness(columnIndex * (1500 / columnsCount), 150, 1500 - (columnIndex + 1) * (1500 / columnsCount), 450),
+                Margin = new Thickness(columnIndex * (1800 / columnsCount), 150, 1800 - (columnIndex + 1) * (1800 / columnsCount), 450),
                 Background = new SolidColorBrush(Colors.LightGray),
                 FontSize = 20,
                 BorderThickness = new Thickness(0)

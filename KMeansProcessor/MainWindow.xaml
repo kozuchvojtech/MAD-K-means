@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:KMeansProcessor"
         mc:Ignorable="d"
         Title="K-means" Height="1120
-        " Width="1540">
+        " Width="1840">
     <Window.Resources>
         <Style x:Key="LoadDataButtonStyle" TargetType="Button">
             <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -36,16 +36,16 @@
                 Style="{StaticResource LoadDataButtonStyle}"
                 VerticalAlignment="Top" Click="FetchData" Height="49" Width="125"/>
         <Frame x:Name="ResultsFrame" NavigationUIVisibility="Hidden" Content="" Margin="20,100,20,20"/>
-        <Button x:Name="KMeansDataBtn" Content="K-means" IsEnabled="False" HorizontalAlignment="Left" Margin="374,20,0,0" 
+        <Button x:Name="KMeansDataBtn" Content="K-means" IsEnabled="False" HorizontalAlignment="Left" Margin="554,20,0,0" 
             Style="{StaticResource LoadDataButtonStyle}"
             VerticalAlignment="Top" Click="LoadKMeansData" Height="49" Width="161"/>
-        <Button x:Name="DistributionDataBtn" Content="Distribution" IsEnabled="False" HorizontalAlignment="Left" Margin="560,20,0,0" 
+        <Button x:Name="DistributionDataBtn" Content="Distribution" IsEnabled="False" HorizontalAlignment="Left" Margin="740,20,0,0" 
             Style="{StaticResource LoadDataButtonStyle}"
             VerticalAlignment="Top" Click="LoadDistributionData"  Height="49" Width="173"/>
-        <Button x:Name="MeanVarianceDataBtn" Content="Mean/variance" IsEnabled="False" HorizontalAlignment="Left" Margin="756,20,0,0" 
+        <Button x:Name="MeanVarianceDataBtn" Content="Mean/variance" IsEnabled="False" HorizontalAlignment="Left" Margin="936,20,0,0" 
             Style="{StaticResource LoadDataButtonStyle}"
             VerticalAlignment="Top" Click="LoadMeanVariance" Height="49" Width="173"/>
-        <Button x:Name="DatasetDataBtn" Content="Dataset" IsEnabled="False" HorizontalAlignment="Left" Margin="950,20,0,0" 
+        <Button x:Name="DatasetDataBtn" Content="Dataset" IsEnabled="False" HorizontalAlignment="Left" Margin="1130,20,0,0" 
             Style="{StaticResource LoadDataButtonStyle}"
             VerticalAlignment="Top" Click="LoadDataset" Height="49" Width="173"/>
     </Grid>

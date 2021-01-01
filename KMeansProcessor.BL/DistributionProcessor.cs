@@ -11,14 +11,14 @@ namespace KMeansProcessor.BL
     {
         public static double Minimum { get; set; }
         public static double Maximum { get; set; }
-        public static double StepSize => (Maximum - Math.Abs(Minimum)) / 20;
+        public static double StepSize => (Maximum - Minimum) / 500;
 
         public static void CalculateNormalDistribution(DataColumn column)
         {
             column.NormalDistribution = new List<(double, double)>();
             (var minimum, var maximum) = GetColumnBoundaries(column);
 
-            for (double i = minimum; i < maximum; i += StepSize)
+            for (double i = minimum; i < maximum; i += StepSize/2)
             {
                 column.NormalDistribution.Add((i, GetNormalDistribution(i, column.Mean, column.TotalVariance)));
             }
@@ -55,9 +55,11 @@ namespace KMeansProcessor.BL
         {
             (var minimum, var maximum) = GetColumnBoundaries(column);
 
-            for (double i = minimum; i < maximum; i += StepSize)
+            var stepSize = (maximum - minimum) / 20;
+
+            for (double i = minimum; i < maximum; i += stepSize)
             {
-                yield return (i, i + StepSize);
+                yield return (i, i + stepSize);
             }
         }
 
@@ -82,13 +84,13 @@ namespace KMeansProcessor.BL
         {
             column.CumulativeDistributionEmpirical = new List<(double, double)>();
 
-            for (double i = Minimum; i < Maximum; i += StepSize)
+            for (double i = Minimum; i < Maximum; i += StepSize*5)
             {
                 double normalDistributionSum = 0;
 
-                for (double j = Minimum; j < i; j += StepSize)
+                for (double j = Minimum; j < i; j += StepSize*5)
                 {
-                    normalDistributionSum += column.Data.Count(d => d >= j && d <= (j + StepSize));
+                    normalDistributionSum += column.Data.Count(d => d >= j && d <= (j + StepSize*5));
                 }
 
                 column.CumulativeDistributionEmpirical.Add((i, normalDistributionSum));
