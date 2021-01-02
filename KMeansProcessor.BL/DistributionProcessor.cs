@@ -11,7 +11,7 @@ namespace KMeansProcessor.BL
     {
         public static double Minimum { get; set; }
         public static double Maximum { get; set; }
-        public static double StepSize => (Maximum - Minimum) / 500;
+        public static double StepSize => (Maximum - Minimum) / 750;
 
         public static void CalculateNormalDistribution(DataColumn column)
         {
@@ -39,8 +39,10 @@ namespace KMeansProcessor.BL
 
         public static (double Minimum, double Maximum) GetColumnBoundaries(DataColumn column)
         {
-            var minimum = column.Data.Min() - column.Data.Count() * 0.05;
-            var maximum = column.Data.Max() + column.Data.Count() * 0.05;
+            var coefficient = column.Data.Count() > 500 ? column.Data.Count() * 0.0035 : column.Data.Count() * 0.05;
+
+            var minimum = column.Data.Min() - coefficient;
+            var maximum = column.Data.Max() + coefficient;
 
             return (minimum, maximum);
         }
